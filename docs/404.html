@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fun Land - Redirecting...</title>
+    <!-- GitHub Pages Hack for Single Page Apps with Hash Routing -->
+    <script type="text/javascript">
+      // Redirect to the index page with the path as a hash
+      var pathSegmentToKeep = 1;
+
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
