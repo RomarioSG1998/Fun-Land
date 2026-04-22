@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { Save, Plus, Trash2, HelpCircle, XCircle, Image as ImageIcon, Smile, Link2 } from 'lucide-react';
 import { compressImage } from '../../../utils/imageUtils';
@@ -9,6 +10,7 @@ export default function DragMatchEditor() {
   const [games, setGames] = useLocalStorage('hub_custom_games', []);
   const navigate = useNavigate();
   const { id } = useParams();
+  const isMobile = useIsMobile();
   
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -106,7 +108,7 @@ export default function DragMatchEditor() {
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '3rem', maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
+    <div className="glass-panel" style={{ padding: isMobile ? '1rem' : '3rem', maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
       
       {activePicker && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }}>
@@ -117,17 +119,17 @@ export default function DragMatchEditor() {
         </div>
       )}
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem', gap: isMobile ? '1rem' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
            <Link2 size={32} color="var(--accent)" />
-           <h2 style={{ margin: 0, fontSize: '2rem' }}>{id ? 'Editar Relacionar' : 'Novo Jogo de Relacionar'}</h2>
+           <h2 style={{ margin: 0, fontSize: isMobile ? '1.4rem' : '2rem' }}>{id ? 'Editar Relacionar' : 'Novo Jogo de Relacionar'}</h2>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-            <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexDirection: isMobile ? 'column' : 'row' }}>
+            <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto' }}>
                 <XCircle size={20} />
                 Cancelar
             </button>
-            <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--accent), var(--accent-hover))', border: 'none' }}>
+            <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto', background: 'linear-gradient(135deg, var(--accent), var(--accent-hover))', border: 'none' }}>
                 <Save size={20} />
                 {id ? 'Salvar Edições' : 'Salvar Jogo'}
             </button>
@@ -138,7 +140,7 @@ export default function DragMatchEditor() {
         Neste jogo, o aluno deverá arrastar os nomes (texto/emoji) até as figuras (imagem) correspondentes.
       </p>
       
-      <div style={{ marginBottom: '3rem', background: 'rgba(0,0,0,0.15)', padding: '24px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+      <div style={{ marginBottom: '3rem', background: 'rgba(0,0,0,0.15)', padding: isMobile ? '16px' : '24px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
         <label style={{ display: 'block', marginBottom: '12px', color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 600 }}>
           Título do Jogo:
         </label>
@@ -157,7 +159,7 @@ export default function DragMatchEditor() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '3rem' }}>
         {pairs.map((p, index) => (
           <div key={p.id} style={{ 
-            display: 'grid', gridTemplateColumns: 'auto 1fr 1fr auto', gap: '1.5rem', alignItems: 'center',
+            display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'auto 1fr 1fr auto', gap: isMobile ? '1rem' : '1.5rem', alignItems: 'center',
             background: 'rgba(15, 23, 42, 0.4)', padding: '1.5rem', borderRadius: '12px', 
             border: '1px solid var(--glass-border)'
           }}>
@@ -186,13 +188,13 @@ export default function DragMatchEditor() {
 
             <div>
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Figura Correspondente 🖼️</label>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
                     
                     {/* Emoji Selector for Figure */}
                     <button 
                         onClick={() => setActivePicker({ index, field: 'figure' })}
                         className="glow-btn secondary"
-                        style={{ flexGrow: 1, padding: '8px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)' }}
+                        style={{ flexGrow: 1, minWidth: isMobile ? '100%' : 'unset', padding: '8px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)' }}
                     >
                         <Smile size={18} style={{ color: 'var(--accent)' }} />
                         <span style={{ fontSize: '0.85rem' }}>Escolher Emoji</span>
@@ -237,7 +239,7 @@ export default function DragMatchEditor() {
       )}
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button className="glow-btn secondary" onClick={addPair} style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
+        <button className="glow-btn secondary" onClick={addPair} style={{ borderColor: 'var(--accent)', color: 'var(--accent)', width: isMobile ? '100%' : 'auto' }}>
           <Plus size={24} /> Novo Par de Relação
         </button>
       </div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 export default function QuizPlayer() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [games] = useLocalStorage('hub_custom_games', []);
   const [game, setGame] = useState(null);
   
@@ -39,10 +41,10 @@ export default function QuizPlayer() {
 
   if (isFinished) {
     return (
-      <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Quiz Concluído!</h2>
-        <h1 style={{ color: 'var(--primary)', fontSize: '4rem', marginBottom: '2rem' }}>{score} / {game.data.questions.length}</h1>
-        <button className="glow-btn" onClick={() => navigate('/')}>Voltar ao Hub</button>
+      <div className="glass-panel" style={{ padding: isMobile ? '1.25rem' : '3rem', textAlign: 'center' }}>
+        <h2 style={{ fontSize: isMobile ? '1.8rem' : '2.5rem', marginBottom: '1rem' }}>Quiz Concluído!</h2>
+        <h1 style={{ color: 'var(--primary)', fontSize: isMobile ? '2.4rem' : '4rem', marginBottom: '2rem' }}>{score} / {game.data.questions.length}</h1>
+        <button className="glow-btn" onClick={() => navigate('/')} style={{ width: isMobile ? '100%' : 'auto' }}>Voltar ao Hub</button>
       </div>
     );
   }
@@ -50,8 +52,8 @@ export default function QuizPlayer() {
   const currentQ = game.data.questions[currentIndex];
 
   return (
-    <div className="glass-panel" style={{ padding: '2.5rem', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.9rem' }}>
+    <div className="glass-panel" style={{ padding: isMobile ? '1rem' : '2.5rem', maxWidth: '800px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '6px' : '0', justifyContent: 'space-between', color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.9rem' }}>
         <span style={{ fontWeight: 600 }}>{game.title}</span>
         <span>{currentIndex + 1} / {game.data.questions.length}</span>
       </div>
@@ -60,10 +62,10 @@ export default function QuizPlayer() {
         {currentQ.qImage && (
             <img src={currentQ.qImage} alt="Questão" style={{ maxWidth: '100%', maxHeight: '250px', borderRadius: '12px', marginBottom: '1.5rem', border: '2px solid var(--glass-border)' }} />
         )}
-        <h2 style={{ fontSize: '2rem', marginBottom: '0' }}>{currentQ.q}</h2>
+        <h2 style={{ fontSize: isMobile ? '1.4rem' : '2rem', marginBottom: '0' }}>{currentQ.q}</h2>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: currentQ.options.some(o => o.image) ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : (currentQ.options.some(o => o.image) ? '1fr 1fr' : '1fr'), gap: '1.5rem' }}>
         {currentQ.options.map((opt, idx) => {
           const isObj = typeof opt === 'object';
           const text = isObj ? opt.text : opt;
@@ -114,7 +116,7 @@ export default function QuizPlayer() {
                 }}>
                   {String.fromCharCode(65 + idx)}
                 </span>
-                <span style={{ fontSize: '1.2rem', color: 'var(--text-main)' }}>{text}</span>
+                <span style={{ fontSize: isMobile ? '1rem' : '1.2rem', color: 'var(--text-main)' }}>{text}</span>
               </div>
             </button>
           );

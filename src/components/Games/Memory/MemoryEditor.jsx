@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { Save, Plus, Trash2, HelpCircle, XCircle, Image as ImageIcon, Smile } from 'lucide-react';
 import { compressImage } from '../../../utils/imageUtils';
@@ -9,6 +10,7 @@ export default function MemoryEditor() {
   const [games, setGames] = useLocalStorage('hub_custom_games', []);
   const navigate = useNavigate();
   const { id } = useParams(); 
+  const isMobile = useIsMobile();
   
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -95,7 +97,7 @@ export default function MemoryEditor() {
 
   const RenderSide = ({ side, p, index }) => (
     <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 }}>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexDirection: isMobile ? 'column' : 'row' }}>
             <div style={{ position: 'relative', flexGrow: 1 }}>
                 <input 
                     type="text" 
@@ -111,7 +113,7 @@ export default function MemoryEditor() {
                     <Smile size={18} />
                 </button>
             </div>
-            <label style={{ cursor: 'pointer', padding: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+            <label style={{ cursor: 'pointer', padding: '8px', width: isMobile ? '100%' : 'auto', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
                 <ImageIcon size={16} />
                 <input type="file" accept="image/*" onChange={(e) => handleImageUpload(index, side, e.target.files[0])} style={{ display: 'none' }} />
             </label>
@@ -131,7 +133,7 @@ export default function MemoryEditor() {
   );
 
   return (
-    <div className="glass-panel" style={{ padding: '3rem', maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
+    <div className="glass-panel" style={{ padding: isMobile ? '1rem' : '3rem', maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
       
       {activePicker && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }}>
@@ -142,24 +144,24 @@ export default function MemoryEditor() {
         </div>
       )}
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem', gap: isMobile ? '1rem' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
            <HelpCircle size={32} color="var(--success)" />
-           <h2 style={{ margin: 0, fontSize: '2rem' }}>{id ? 'Editar Jogo' : 'Criar Jogo da Memória'}</h2>
+           <h2 style={{ margin: 0, fontSize: isMobile ? '1.4rem' : '2rem' }}>{id ? 'Editar Jogo' : 'Criar Jogo da Memória'}</h2>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-            <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexDirection: isMobile ? 'column' : 'row' }}>
+            <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto' }}>
                 <XCircle size={20} />
                 Cancelar
             </button>
-            <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--success), #059669)', border: 'none' }}>
+            <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto', background: 'linear-gradient(135deg, var(--success), #059669)', border: 'none' }}>
                 <Save size={20} />
                 {id ? 'Salvar Edições' : 'Salvar Jogo'}
             </button>
         </div>
       </div>
       
-      <div style={{ marginBottom: '3rem', background: 'rgba(0,0,0,0.15)', padding: '24px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+      <div style={{ marginBottom: '3rem', background: 'rgba(0,0,0,0.15)', padding: isMobile ? '16px' : '24px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
         <label style={{ display: 'block', marginBottom: '12px', color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 600 }}>
           Título do Jogo:
         </label>
@@ -180,16 +182,16 @@ export default function MemoryEditor() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
         {pairs.map((p, index) => (
           <div key={p.id} style={{ 
-            display: 'flex', gap: '1rem', alignItems: 'flex-start',
-            background: 'rgba(15, 23, 42, 0.4)', padding: '1.5rem', borderRadius: '12px', 
+            display: 'flex', gap: '1rem', alignItems: 'flex-start', flexDirection: isMobile ? 'column' : 'row',
+            background: 'rgba(15, 23, 42, 0.4)', padding: isMobile ? '1rem' : '1.5rem', borderRadius: '12px', 
             border: '1px solid var(--glass-border)', position: 'relative'
           }}>
             <div style={{ background: 'var(--success)', color: 'white', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '0.9rem', flexShrink: 0, marginTop: '8px' }}>
                {index + 1}
             </div>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'stretch', flexGrow: 1 }}>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'stretch', flexGrow: 1, flexDirection: isMobile ? 'column' : 'row' }}>
               <RenderSide side="a" p={p} index={index} />
-              <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>+</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>+</div>
               <RenderSide side="b" p={p} index={index} />
             </div>
             {pairs.length > 1 && (
@@ -202,7 +204,7 @@ export default function MemoryEditor() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button className="glow-btn secondary" onClick={addPair} style={{ borderColor: 'var(--success)', color: 'var(--success)' }}>
+        <button className="glow-btn secondary" onClick={addPair} style={{ borderColor: 'var(--success)', color: 'var(--success)', width: isMobile ? '100%' : 'auto' }}>
           <Plus size={24} /> Novo Par
         </button>
       </div>

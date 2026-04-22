@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { Save, Plus, Trash2, HelpCircle, XCircle, Image as ImageIcon, Smile } from 'lucide-react';
 import { compressImage } from '../../../utils/imageUtils';
@@ -9,6 +10,7 @@ export default function QuizEditor() {
   const [games, setGames] = useLocalStorage('hub_custom_games', []);
   const navigate = useNavigate();
   const { id } = useParams();
+  const isMobile = useIsMobile();
   
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -117,7 +119,7 @@ export default function QuizEditor() {
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '3rem', maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
+    <div className="glass-panel" style={{ padding: isMobile ? '1rem' : '3rem', maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
       
       {activePicker && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }}>
@@ -128,24 +130,24 @@ export default function QuizEditor() {
         </div>
       )}
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem', gap: isMobile ? '1rem' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
            <HelpCircle size={32} color="var(--primary)" />
-           <h2 style={{ margin: 0, fontSize: '2rem' }}>{id ? 'Editar Quiz' : 'Criar Novo Quiz'}</h2>
+           <h2 style={{ margin: 0, fontSize: isMobile ? '1.4rem' : '2rem' }}>{id ? 'Editar Quiz' : 'Criar Novo Quiz'}</h2>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexDirection: isMobile ? 'column' : 'row' }}>
+          <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto' }}>
             <XCircle size={20} />
             Cancelar
           </button>
-          <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px' }}>
+          <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto' }}>
             <Save size={20} />
             {id ? 'Salvar Edições' : 'Salvar Jogo'}
           </button>
         </div>
       </div>
       
-      <div style={{ marginBottom: '3rem', background: 'rgba(0,0,0,0.15)', padding: '24px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+      <div style={{ marginBottom: '3rem', background: 'rgba(0,0,0,0.15)', padding: isMobile ? '16px' : '24px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
         <label style={{ display: 'block', marginBottom: '12px', color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 600 }}>
           Qual o Título do Quiz?
         </label>
@@ -167,12 +169,12 @@ export default function QuizEditor() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', marginBottom: '3rem' }}>
         {questions.map((q, qIndex) => (
           <div key={q.id} style={{ 
-            background: 'rgba(15, 23, 42, 0.4)', padding: '2rem', borderRadius: '12px', 
+            background: 'rgba(15, 23, 42, 0.4)', padding: isMobile ? '1rem' : '2rem', borderRadius: '12px', 
             border: '1px solid var(--glass-border)', position: 'relative',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
           }}>
             
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '1.5rem', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '10px' : '0' }}>
                <h4 style={{ margin: 0, color: 'var(--primary)', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ background: 'var(--primary)', color: 'white', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '0.9rem' }}>
                      {qIndex + 1}
@@ -189,7 +191,7 @@ export default function QuizEditor() {
                )}
             </div>
 
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '1.5rem', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '1.5rem', alignItems: 'flex-start', flexDirection: isMobile ? 'column' : 'row' }}>
               <div style={{ flexGrow: 1 }}>
                 <div style={{ position: 'relative' }}>
                   <input 
@@ -211,7 +213,7 @@ export default function QuizEditor() {
                 </div>
               </div>
               
-              <label className="glow-btn secondary" style={{ padding: '10px', height: '48px', width: '48px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <label className="glow-btn secondary" style={{ padding: '10px', height: '48px', width: isMobile ? '100%' : '48px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ImageIcon size={20} />
                 <input type="file" accept="image/*" onChange={(e) => handleImageUpload(qIndex, null, e.target.files[0])} style={{ display: 'none' }} />
               </label>
@@ -232,7 +234,7 @@ export default function QuizEditor() {
             <label style={{ display: 'block', marginBottom: '12px', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
                Alternativas (Adicione Emojis ou Imagens):
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
               {q.options.map((opt, optIndex) => (
                 <div key={optIndex} style={{ 
                     display: 'flex', flexDirection: 'column',
@@ -290,7 +292,7 @@ export default function QuizEditor() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button className="glow-btn secondary" onClick={addQuestion} style={{ fontSize: '1.1rem', padding: '16px 32px' }}>
+        <button className="glow-btn secondary" onClick={addQuestion} style={{ fontSize: '1.1rem', padding: '16px 32px', width: isMobile ? '100%' : 'auto' }}>
           <Plus size={24} /> 
           Nova Pergunta
         </button>

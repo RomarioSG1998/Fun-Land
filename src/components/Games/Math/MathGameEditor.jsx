@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { Save, Plus, Trash2, HelpCircle, XCircle, Calculator, Zap, Settings } from 'lucide-react';
 
@@ -7,6 +8,7 @@ export default function MathGameEditor() {
   const [games, setGames] = useLocalStorage('hub_custom_games', []);
   const navigate = useNavigate();
   const { id } = useParams();
+  const isMobile = useIsMobile();
   
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -106,18 +108,18 @@ export default function MathGameEditor() {
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '3rem', maxWidth: '900px', margin: '0 auto' }}>
+    <div className="glass-panel" style={{ padding: isMobile ? '1rem' : '3rem', maxWidth: '900px', margin: '0 auto' }}>
       
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem', gap: isMobile ? '1rem' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
            <Calculator size={32} color="var(--primary)" />
-           <h2 style={{ margin: 0, fontSize: '2rem' }}>{id ? 'Editar 4 Operações' : 'Novo Jogo: 4 Operações'}</h2>
+           <h2 style={{ margin: 0, fontSize: isMobile ? '1.4rem' : '2rem' }}>{id ? 'Editar 4 Operações' : 'Novo Jogo: 4 Operações'}</h2>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-            <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexDirection: isMobile ? 'column' : 'row' }}>
+            <button className="glow-btn secondary" onClick={() => navigate('/')} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto' }}>
                 <XCircle size={20} /> Cancelar
             </button>
-            <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px' }}>
+            <button className="glow-btn" onClick={saveGame} style={{ padding: '12px 24px', width: isMobile ? '100%' : 'auto' }}>
                 <Save size={20} /> Salvar Jogo
             </button>
         </div>
@@ -135,7 +137,7 @@ export default function MathGameEditor() {
       </div>
 
       {/* Mode Selector */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '3rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px', marginBottom: '3rem' }}>
         <div 
             onClick={() => setAutoGen(true)}
             style={{ 
@@ -166,12 +168,12 @@ export default function MathGameEditor() {
 
       {/* Auto-Gen Settings */}
       {autoGen ? (
-        <div className="glass-panel" style={{ padding: '24px', background: 'rgba(0,0,0,0.15)', marginBottom: '2rem' }}>
+        <div className="glass-panel" style={{ padding: isMobile ? '16px' : '24px', background: 'rgba(0,0,0,0.15)', marginBottom: '2rem' }}>
             <h4 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}><Settings size={18} /> Configurações do Gerador</h4>
             
             <div style={{ marginBottom: '2.5rem' }}>
                 <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'block', marginBottom: '15px' }}>Nível de Dificuldade (Presets):</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: '15px' }}>
                     {[
                         { id: 'facil', name: 'Fácil', color: 'var(--success)' },
                         { id: 'medio', name: 'Médio', color: 'var(--warning)' },
@@ -193,7 +195,7 @@ export default function MathGameEditor() {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '2rem', marginBottom: '20px' }}>
                 <div>
                     <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Número Mínimo</label>
                     <input type="number" value={difficulty.min} onChange={(e) => { setDifficulty({...difficulty, min: parseInt(e.target.value)}); setLevel('custom'); }} />
@@ -205,7 +207,7 @@ export default function MathGameEditor() {
             </div>
 
             <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'block', marginBottom: '12px' }}>Operações Incluídas:</label>
-            <div style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                 {['+', '-', '*', '/'].map(op => (
                     <button 
                         key={op}
@@ -232,7 +234,7 @@ export default function MathGameEditor() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {customOps.map((op, idx) => (
-                <div key={op.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <div key={op.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: isMobile ? 'wrap' : 'nowrap', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
                     <div style={{ width: '30px', fontWeight: 'bold', color: 'var(--primary)' }}>{idx + 1}</div>
                     <input type="number" value={op.a} style={{ width: '80px' }} onChange={(e) => updateOp(idx, 'a', e.target.value)} />
                     <select value={op.op} style={{ width: '70px', fontSize: '1.2rem' }} onChange={(e) => updateOp(idx, 'op', e.target.value)}>
@@ -243,7 +245,7 @@ export default function MathGameEditor() {
                     </select>
                     <input type="number" value={op.b} style={{ width: '80px' }} onChange={(e) => updateOp(idx, 'b', e.target.value)} />
                     <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>=</span>
-                    <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '10px 20px', borderRadius: '8px', color: 'var(--success)', fontWeight: 'bold', flexGrow: 1, textAlign: 'center' }}>
+                    <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '10px 20px', borderRadius: '8px', color: 'var(--success)', fontWeight: 'bold', flexGrow: 1, textAlign: 'center', minWidth: isMobile ? '100%' : 'unset' }}>
                         {op.res}
                     </div>
                     <button onClick={() => removeOp(op.id)} style={{ color: 'var(--danger)', background: 'transparent' }}><Trash2 size={20} /></button>
